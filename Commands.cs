@@ -117,6 +117,15 @@ public partial class WeaponPaints
 			});
 		});
 
+		_config.Additional.CommandNametag.ForEach(c =>
+		{
+			AddCommand($"css_{c}", "Set nametag", (player, info) =>
+			{
+				if (!Utility.IsPlayerValid(player)) return;
+				OnCommandNametag(player, info);
+			});
+		});
+
 		_config.Additional.CommandSkin.ForEach(c =>
 		{
 			AddCommand($"css_{c}", "Skins info", (player, info) =>
@@ -168,6 +177,47 @@ public partial class WeaponPaints
 		{
 			player.Print(Localizer["wp_stattrak_action"]);
 		}
+	}
+
+	private void OnCommandNametag(CCSPlayerController? player, CommandInfo commandInfo)
+	{
+		if (player == null || !player.IsValid) return;
+
+		if (!GPlayerWeaponsInfo.TryGetValue(player.Slot, out var teamInfo) || 
+		    !teamInfo.TryGetValue(player.Team, out var teamWeapons) )
+			return;
+
+		CBasePlayerWeapon? weapon = player.PlayerPawn.Value?.WeaponServices?.ActiveWeapon.Value;
+
+		if (weapon == null) return;
+
+		int weaponDefIndex = weapon.AttributeManager.Item.ItemDefinitionIndex;
+
+		if (!teamWeapons.TryGetValue(weapon.AttributeManager.Item.ItemDefinitionIndex, out var teamWeapon))
+			return;
+
+		var nametag = commandInfo.GetArg(1);
+
+		teamWeapon.Nametag = nametag;
+		RefreshWeapons(player);
+
+		PlayerInfo playerInfo = new PlayerInfo
+		{
+			UserId = player.UserId,
+			Slot = player.Slot,
+			Index = (int)player.Index,
+			SteamId = player.SteamID.ToString(),
+			Name = player.PlayerName,
+			IpAddress = player.IpAddress?.Split(":")[0] ?? string.Empty
+		};
+
+		if (!string.IsNullOrEmpty(Localizer["wp_nametag_action"]))
+		{
+			player.Print(Localizer["wp_nametag_action", nametag]);
+		}
+
+		if (WeaponSync != null)
+			_ = Task.Run(async () => await WeaponSync.SyncNametagToDatabase(playerInfo, weaponDefIndex, player.TeamNum, nametag));
 	}
 
 	private void SetupKnifeMenu()

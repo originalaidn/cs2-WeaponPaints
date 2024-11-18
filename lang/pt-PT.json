@@ -24,7 +24,8 @@
 	"wp_skin_menu_skin_title": "Selecione a skin para {lime}{0}{default}",
 	"wp_skin_menu_select": "Escolheu {lime}{0}{default} como a sua skin",
 
-	"wp_stattrak_action": "Alterou com sucesso a configuração do stattrak",
+	"wp_stattrak_action": "Alterou com sucesso a configuração do StatTrak™",
+	"wp_nametag_action": "Definiste uma etiqueta de nome na tua arma: {0}",
 	
 	"None": "Nenhum"
 }

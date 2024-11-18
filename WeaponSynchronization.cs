@@ -626,4 +626,21 @@ internal class WeaponSynchronization
 	        Utility.Log($"Error syncing stattrak to database: {e.Message}");
 	    }
 	}
+
+	internal async Task SyncNametagToDatabase(PlayerInfo player, int weaponDefIndex, int team, string value)
+	{
+		if (string.IsNullOrEmpty(player.SteamId)) return;
+
+		const string query = "UPDATE `wp_player_skins` SET `weapon_nametag` = @value WHERE `steamid` = @steamid AND `weapon_team` = @team AND `weapon_defindex` = @weaponDefIndex";
+
+		try
+		{
+			await using var connection = await _database.GetConnectionAsync();
+			await connection.ExecuteAsync(query, new { steamid = player.SteamId, team = team, weaponDefIndex = weaponDefIndex, value = value });
+		}
+		catch (Exception e)
+		{
+			Utility.Log($"Error syncing clantag to database: {e.Message}");
+		}
+	}
 }

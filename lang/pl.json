@@ -25,6 +25,7 @@
 	"wp_skin_menu_select": "Wybrałeś {lime}{0}{default} jako swoją skórkę",
 
 	"wp_stattrak_action": "Pomyślnie zmieniłeś ustawienie stattraka",
+	"wp_nametag_action": "Ustawiłeś etykietę z nazwą na swojej broni: {0}",
 	
 	"None": "Brak"
 }
